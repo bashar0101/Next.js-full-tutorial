@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial 3 — Pages, Routing & Dynamic Routes</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      line-height: 1.75;
+      padding: 0 0 60px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      padding: 50px 40px 40px;
+      text-align: center;
+      border-bottom: 3px solid #3b82f6;
+    }
+
+    header .badge {
+      display: inline-block;
+      background: #3b82f6;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    header h1 { font-size: 2.4rem; font-weight: 800; color: #fff; margin-bottom: 10px; }
+    header p  { color: #94a3b8; font-size: 1.05rem; max-width: 620px; margin: 0 auto; }
+
+    .meta {
+      display: flex; justify-content: center;
+      gap: 24px; margin-top: 20px; flex-wrap: wrap;
+    }
+    .meta span {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 5px 16px; border-radius: 20px;
+      font-size: 0.82rem; color: #cbd5e1;
+    }
+
+    main { max-width: 860px; margin: 0 auto; padding: 40px 24px; }
+
+    .section {
+      background: #1e2235;
+      border: 1px solid #2d3451;
+      border-radius: 14px;
+      padding: 32px 36px;
+      margin-bottom: 28px;
+    }
+
+    .section-title {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 1.3rem; font-weight: 700; color: #60a5fa;
+      margin-bottom: 18px; padding-bottom: 12px;
+      border-bottom: 1px solid #2d3451;
+    }
+
+    .section-title .num {
+      background: #3b82f6; color: white;
+      width: 30px; height: 30px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 800; flex-shrink: 0;
+    }
+
+    p { margin-bottom: 14px; color: #cbd5e1; }
+    p:last-child { margin-bottom: 0; }
+
+    .callout {
+      background: rgba(59,130,246,0.1);
+      border-left: 4px solid #3b82f6;
+      border-radius: 0 8px 8px 0;
+      padding: 14px 20px; margin: 18px 0;
+      color: #bfdbfe; font-style: italic;
+    }
+
+    .js-note {
+      background: rgba(251,191,36,0.08);
+      border: 1px solid rgba(251,191,36,0.25);
+      border-radius: 10px;
+      padding: 16px 20px; margin: 18px 0;
+    }
+
+    .js-note .js-label {
+      font-size: 0.72rem; font-weight: 800;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: #fbbf24; margin-bottom: 8px;
+    }
+
+    .js-note p { color: #fde68a; margin: 0; font-style: normal; }
+
+    table {
+      width: 100%; border-collapse: collapse;
+      margin: 18px 0; font-size: 0.92rem;
+    }
+    thead tr { background: #2d3451; }
+    thead th {
+      padding: 12px 16px; text-align: left;
+      color: #93c5fd; font-weight: 700;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    tbody tr { border-bottom: 1px solid #2d3451; transition: background 0.15s; }
+    tbody tr:hover { background: rgba(59,130,246,0.06); }
+    tbody td { padding: 11px 16px; color: #cbd5e1; }
+    tbody td:first-child { color: #93c5fd; font-weight: 600; font-family: monospace; }
+
+    .code-block {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 20px 24px; margin: 16px 0;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.88rem; overflow-x: auto; line-height: 1.9;
+    }
+
+    .code-block .kw  { color: #ff7b72; }
+    .code-block .fn  { color: #d2a8ff; }
+    .code-block .str { color: #a5d6ff; }
+    .code-block .tag { color: #7ee787; }
+    .code-block .atr { color: #79c0ff; }
+    .code-block .cmt { color: #6e7681; }
+    .code-block .num { color: #ffa657; }
+    .code-block .url { color: #7ee787; }
+    .code-block .hi  { background: rgba(59,130,246,0.18); border-radius: 3px; padding: 1px 4px; }
+
+    .file-tree {
+      background: #0d1117; border: 1px solid #30363d;
+      border-radius: 10px; padding: 20px 24px; margin: 16px 0;
+      font-family: 'Consolas','Courier New',monospace;
+      font-size: 0.88rem; line-height: 2;
+    }
+    .file-tree .f  { color: #ffa657; font-weight: 700; }
+    .file-tree .fi { color: #e6edf3; }
+    .file-tree .dyn{ color: #7ee787; font-weight: 700; }
+    .file-tree .cm { color: #6e7681; }
+
+    .cheatsheet {
+      background: #0d1117; border: 1px solid #30363d;
+      border-radius: 10px; padding: 20px 24px; margin: 16px 0;
+      font-family: 'Consolas','Courier New',monospace;
+      font-size: 0.88rem; line-height: 2;
+    }
+    .cheatsheet .path { color: #79c0ff; }
+    .cheatsheet .arrow{ color: #d2a8ff; }
+    .cheatsheet .url  { color: #7ee787; }
+    .cheatsheet .cm   { color: #6e7681; }
+
+    code {
+      background: #252b40; color: #79c0ff;
+      padding: 2px 7px; border-radius: 5px;
+      font-family: 'Consolas','Courier New',monospace; font-size: 0.87em;
+    }
+
+    .summary-box {
+      background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(139,92,246,0.12));
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 12px; padding: 24px 28px;
+    }
+    .summary-box ul { list-style: none; padding: 0; }
+    .summary-box ul li {
+      padding: 7px 0 7px 28px; position: relative;
+      color: #cbd5e1; font-size: 0.95rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .summary-box ul li:last-child { border-bottom: none; }
+    .summary-box ul li::before {
+      content: "✓"; position: absolute; left: 0;
+      color: #34d399; font-weight: 800;
+    }
+
+    .exam-section {
+      background: linear-gradient(135deg, #1a2e1a, #1a2035);
+      border: 1px solid #34d399; border-radius: 14px;
+      padding: 32px 36px; margin-top: 32px;
+    }
+    .exam-title {
+      font-size: 1.3rem; font-weight: 700; color: #34d399;
+      margin-bottom: 20px; padding-bottom: 12px;
+      border-bottom: 1px solid rgba(52,211,153,0.2);
+    }
+    .score-badge {
+      display: inline-flex; align-items: center;
+      background: #34d399; color: #0d1117;
+      font-size: 1.3rem; font-weight: 900;
+      padding: 10px 28px; border-radius: 30px; margin-bottom: 20px;
+    }
+    .pass { color: #34d399; font-weight: 700; }
+    .note-row { color: #fde68a; font-size: 0.85rem; font-style: italic; }
+
+    footer {
+      text-align: center; padding: 30px 20px 0;
+      color: #475569; font-size: 0.82rem;
+    }
+    footer strong { color: #64748b; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Next.js Full Course — Zero to Hero</div>
+  <h1>Tutorial 3</h1>
+  <p>Pages, Routing &amp; Dynamic Routes — Building flexible URL structures</p>
+  <div class="meta">
+    <span>📚 Level: Beginner → Intermediate</span>
+    <span>⏱ ~25 min read</span>
+    <span>🗓 May 2026</span>
+    <span>✅ Exam Passed</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- Section 1: Static review -->
+  <div class="section">
+    <div class="section-title"><span class="num">1</span> Quick Review — Static Routes</div>
+    <p>Files in <code>pages/</code> become pages automatically. These are <strong style="color:#93c5fd">static routes</strong> — the URL is fixed and never changes.</p>
+    <div class="cheatsheet">
+      <span class="path">pages/index.js</span>       <span class="arrow">→</span>  <span class="url">/</span><br>
+      <span class="path">pages/about.js</span>       <span class="arrow">→</span>  <span class="url">/about</span><br>
+      <span class="path">pages/contact.js</span>     <span class="arrow">→</span>  <span class="url">/contact</span><br>
+      <span class="path">pages/blog/news.js</span>   <span class="arrow">→</span>  <span class="url">/blog/news</span>
+    </div>
+    <p>Static routes work great for fixed pages. But for things like blog posts, products, or user profiles — you need <strong style="color:#93c5fd">dynamic routes</strong>.</p>
+  </div>
+
+  <!-- Section 2: Dynamic routes -->
+  <div class="section">
+    <div class="section-title"><span class="num">2</span> Dynamic Routes — One File, Many URLs</div>
+    <p>Instead of creating 100 files for 100 blog posts, you create <strong>one file</strong> using square brackets <code>[ ]</code> in the filename:</p>
+    <div class="file-tree">
+      <span class="dyn">pages/blog/[id].js</span>   <span class="cm">← one file handles ALL of these:</span><br><br>
+      <span class="cm">/blog/1</span><br>
+      <span class="cm">/blog/42</span><br>
+      <span class="cm">/blog/my-first-post</span><br>
+      <span class="cm">/blog/anything-at-all</span>
+    </div>
+    <div class="callout">
+      💡 Think of <code>[id]</code> as a placeholder — like a blank space that gets filled in with whatever is in the URL.
+    </div>
+  </div>
+
+  <!-- Section 3: useRouter -->
+  <div class="section">
+    <div class="section-title"><span class="num">3</span> The useRouter Hook — Reading URL Values</div>
+    <p>To read the value from the URL, use the <code>useRouter</code> hook from Next.js:</p>
+    <div class="code-block">
+      <span class="kw">import</span> { useRouter } <span class="kw">from</span> <span class="str">'next/router'</span>;<br><br>
+      <span class="kw">export default function</span> <span class="fn">BlogPost</span>() {<br>
+      &nbsp;&nbsp;<span class="kw">const</span> router = <span class="fn">useRouter</span>();<br>
+      &nbsp;&nbsp;<span class="kw">const</span> { id } = router.query;  <span class="cmt">// reads the [id] from the URL</span><br><br>
+      &nbsp;&nbsp;<span class="kw">return</span> (<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;div&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;h1&gt;</span>You are reading post: {id}<span class="tag">&lt;/h1&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;/div&gt;</span><br>
+      &nbsp;&nbsp;);<br>
+      }
+    </div>
+    <table>
+      <thead><tr><th>Line</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>import { useRouter }</td><td>Brings in the useRouter tool from Next.js</td></tr>
+        <tr><td>const router = useRouter()</td><td>Creates a router object with all URL information</td></tr>
+        <tr><td>const { id } = router.query</td><td>Extracts the <code>id</code> value from the URL</td></tr>
+        <tr><td>{id} in JSX</td><td>Displays the value on the page</td></tr>
+      </tbody>
+    </table>
+    <div class="js-note">
+      <div class="js-label">⚡ JavaScript Note — Destructuring</div>
+      <p>Destructuring is a shortcut to extract values from any JavaScript object. It is NOT specific to URLs — it works with any object!</p>
+    </div>
+    <div class="code-block">
+      <span class="cmt">// Without destructuring (longer way):</span><br>
+      <span class="kw">const</span> id = router.query.id;<br><br>
+      <span class="cmt">// With destructuring (shorter, same result):</span><br>
+      <span class="kw">const</span> { id } = router.query;<br><br>
+      <span class="cmt">// Works with any object:</span><br>
+      <span class="kw">const</span> person = { name: <span class="str">"Bashar"</span>, age: <span class="num">25</span> };<br>
+      <span class="kw">const</span> { name, age } = person;  <span class="cmt">// name = "Bashar", age = 25</span>
+    </div>
+  </div>
+
+  <!-- Section 4: Linking to dynamic routes -->
+  <div class="section">
+    <div class="section-title"><span class="num">4</span> Linking to Dynamic Routes</div>
+    <p>Use template literals to build dynamic URLs inside a <code>&lt;Link&gt;</code>:</p>
+    <div class="code-block">
+      <span class="kw">import</span> Link <span class="kw">from</span> <span class="str">'next/link'</span>;<br><br>
+      <span class="kw">const</span> posts = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>];<br><br>
+      <span class="kw">export default function</span> <span class="fn">Home</span>() {<br>
+      &nbsp;&nbsp;<span class="kw">return</span> (<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;div&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{posts.<span class="fn">map</span>((id) <span class="kw">=&gt;</span> (<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;div</span> <span class="atr">key</span>={id}<span class="tag">&gt;</span>  <span class="cmt">// ← key is required in .map()!</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;Link</span> <span class="atr">href</span>={<span class="str">`/blog/${id}`</span>}<span class="tag">&gt;</span>Read Post {id}<span class="tag">&lt;/Link&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;/div&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;))}<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;/div&gt;</span><br>
+      &nbsp;&nbsp;);<br>
+      }
+    </div>
+    <div class="js-note">
+      <div class="js-label">⚡ JavaScript Note — Template Literals</div>
+      <p>Use backticks ` ` with <code>${variable}</code> to build strings with variables. Cleaner than string concatenation with <code>+</code>.</p>
+    </div>
+    <div class="code-block">
+      <span class="kw">const</span> id = <span class="num">5</span>;<br><br>
+      <span class="cmt">// Old way:</span><br>
+      <span class="kw">const</span> url = <span class="str">"/blog/"</span> + id;      <span class="cmt">// "/blog/5"</span><br><br>
+      <span class="cmt">// Template literal (better):</span><br>
+      <span class="kw">const</span> url = <span class="str">`/blog/${id}`</span>;    <span class="cmt">// "/blog/5" ← cleaner!</span>
+    </div>
+  </div>
+
+  <!-- Section 5: Nested dynamic -->
+  <div class="section">
+    <div class="section-title"><span class="num">5</span> Nested Dynamic Routes</div>
+    <p>You can have multiple dynamic params in the same route:</p>
+    <div class="file-tree">
+      <span class="dyn">pages/shop/[category]/[productId].js</span><br><br>
+      <span class="cm">→  /shop/shoes/42        category="shoes",   productId="42"</span><br>
+      <span class="cm">→  /shop/shirts/7        category="shirts",  productId="7"</span><br>
+      <span class="cm">→  /shop/books/99        category="books",   productId="99"</span>
+    </div>
+    <div class="code-block">
+      <span class="kw">import</span> { useRouter } <span class="kw">from</span> <span class="str">'next/router'</span>;<br><br>
+      <span class="kw">export default function</span> <span class="fn">Product</span>() {<br>
+      &nbsp;&nbsp;<span class="kw">const</span> router = <span class="fn">useRouter</span>();<br>
+      &nbsp;&nbsp;<span class="kw">const</span> { category, productId } = router.query;<br><br>
+      &nbsp;&nbsp;<span class="kw">return</span> (<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;div&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;p&gt;</span>Category: {category}<span class="tag">&lt;/p&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;p&gt;</span>Product ID: {productId}<span class="tag">&lt;/p&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;/div&gt;</span><br>
+      &nbsp;&nbsp;);<br>
+      }
+    </div>
+  </div>
+
+  <!-- Section 6: Query params -->
+  <div class="section">
+    <div class="section-title"><span class="num">6</span> Query Parameters</div>
+    <p>Query parameters are the extra data after <code>?</code> in a URL. <code>router.query</code> reads them too:</p>
+    <div class="code-block">
+      <span class="cmt">// URL: /search?term=nextjs</span><br><br>
+      <span class="kw">const</span> { term } = router.query;  <span class="cmt">// term = "nextjs"</span>
+    </div>
+    <p>Adding query params to a Link:</p>
+    <div class="code-block">
+      <span class="cmt">// Simple way:</span><br>
+      <span class="tag">&lt;Link</span> <span class="atr">href</span>=<span class="str">"/search?term=nextjs"</span><span class="tag">&gt;</span>Search<span class="tag">&lt;/Link&gt;</span><br><br>
+      <span class="cmt">// Object way (cleaner for multiple params):</span><br>
+      <span class="tag">&lt;Link</span> <span class="atr">href</span>={{ pathname: <span class="str">'/search'</span>, query: { term: <span class="str">'nextjs'</span> } }}<span class="tag">&gt;</span><br>
+      &nbsp;&nbsp;Search<br>
+      <span class="tag">&lt;/Link&gt;</span>
+    </div>
+  </div>
+
+  <!-- Section 7: router.push -->
+  <div class="section">
+    <div class="section-title"><span class="num">7</span> Programmatic Navigation — router.push()</div>
+    <p>Navigate using code — useful after form submissions or button clicks:</p>
+    <div class="code-block">
+      <span class="kw">import</span> { useRouter } <span class="kw">from</span> <span class="str">'next/router'</span>;<br><br>
+      <span class="kw">export default function</span> <span class="fn">Home</span>() {<br>
+      &nbsp;&nbsp;<span class="kw">const</span> router = <span class="fn">useRouter</span>();<br><br>
+      &nbsp;&nbsp;<span class="kw">function</span> <span class="fn">goToAbout</span>() {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;router.<span class="fn">push</span>(<span class="str">'/about'</span>);  <span class="cmt">// navigate to /about</span><br>
+      &nbsp;&nbsp;}<br><br>
+      &nbsp;&nbsp;<span class="kw">return</span> (<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;button</span> <span class="atr">onClick</span>={goToAbout}<span class="tag">&gt;</span>Go to About<span class="tag">&lt;/button&gt;</span><br>
+      &nbsp;&nbsp;);<br>
+      }
+    </div>
+  </div>
+
+  <!-- Section 8: 404 -->
+  <div class="section">
+    <div class="section-title"><span class="num">8</span> Custom 404 Page</div>
+    <p>Create <code>pages/404.js</code> to show a custom page when a URL doesn't match any route:</p>
+    <div class="code-block">
+      <span class="kw">export default function</span> <span class="fn">NotFound</span>() {<br>
+      &nbsp;&nbsp;<span class="kw">return</span> (<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;div&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;h1&gt;</span>404 — Page Not Found<span class="tag">&lt;/h1&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;p&gt;</span>Sorry, this page does not exist!<span class="tag">&lt;/p&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;/div&gt;</span><br>
+      &nbsp;&nbsp;);<br>
+      }
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section">
+    <div class="section-title"><span class="num">9</span> Summary — Routes Cheat Sheet</div>
+    <div class="cheatsheet">
+      <span class="path">pages/index.js</span>                    <span class="arrow">→</span>  <span class="url">/</span><br>
+      <span class="path">pages/about.js</span>                    <span class="arrow">→</span>  <span class="url">/about</span><br>
+      <span class="path">pages/blog/[id].js</span>                <span class="arrow">→</span>  <span class="url">/blog/1 , /blog/42 , /blog/anything</span><br>
+      <span class="path">pages/shop/[category]/[id].js</span>     <span class="arrow">→</span>  <span class="url">/shop/shoes/42</span><br>
+      <span class="path">pages/404.js</span>                      <span class="arrow">→</span>  <span class="url">shown when no route matches</span>
+    </div>
+    <div class="summary-box" style="margin-top:18px">
+      <ul>
+        <li>Use <code>[param].js</code> filename syntax to create <strong>dynamic routes</strong>.</li>
+        <li><code>useRouter()</code> gives you a router object with all URL information.</li>
+        <li><code>router.query</code> holds both dynamic params and query string values.</li>
+        <li>Use <strong>destructuring</strong> to cleanly extract values from objects: <code>const { id } = router.query</code>.</li>
+        <li>Use <strong>template literals</strong> to build dynamic URLs: <code>`/blog/${id}`</code>.</li>
+        <li>Always add a <strong><code>key</code> prop</strong> when rendering lists with <code>.map()</code>.</li>
+        <li><code>router.push('/path')</code> navigates programmatically using code.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Exam -->
+  <div class="exam-section">
+    <div class="exam-title">📝 Tutorial 3 Exam — Results</div>
+    <div class="score-badge">🎓 Passed ✅</div>
+    <table>
+      <thead><tr><th>Part</th><th>Topic</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Part 1</td><td>Multiple Choice</td><td class="pass">3/4 → corrected ✅</td></tr>
+        <tr><td>Part 2</td><td>Short Answer</td><td class="pass">corrected ✅</td></tr>
+        <tr><td>Part 3</td><td>Complete the Code</td><td class="pass">corrected ✅</td></tr>
+        <tr><td>Part 4</td><td>Find the Error</td><td class="pass">2/2 ✅</td></tr>
+        <tr><td>Part 5</td><td>True or False</td><td class="pass">4/4 ✅</td></tr>
+        <tr><td colspan="2" class="note-row">After corrections: destructuring is a general JS feature (not URL-specific). router.query returns specific values from the visited URL, not "anything".</td><td class="pass">All Passed ✅</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<footer>
+  <p><strong>Next.js Full Course — Zero to Hero</strong> &nbsp;|&nbsp; Tutorial 3 of many &nbsp;|&nbsp; English Level B1</p>
+  <p style="margin-top:6px">Next up: Tutorial 4 — Data Fetching (getStaticProps, getServerSideProps)</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial 2 — Installing Next.js & Your First Project</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      line-height: 1.75;
+      padding: 0 0 60px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      padding: 50px 40px 40px;
+      text-align: center;
+      border-bottom: 3px solid #3b82f6;
+    }
+
+    header .badge {
+      display: inline-block;
+      background: #3b82f6;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    header h1 { font-size: 2.4rem; font-weight: 800; color: #ffffff; margin-bottom: 10px; }
+    header p { color: #94a3b8; font-size: 1.05rem; max-width: 600px; margin: 0 auto; }
+
+    .meta {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .meta span {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 5px 16px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      color: #cbd5e1;
+    }
+
+    main { max-width: 860px; margin: 0 auto; padding: 40px 24px; }
+
+    .section {
+      background: #1e2235;
+      border: 1px solid #2d3451;
+      border-radius: 14px;
+      padding: 32px 36px;
+      margin-bottom: 28px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #2d3451;
+    }
+
+    .section-title .num {
+      background: #3b82f6;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    p { margin-bottom: 14px; color: #cbd5e1; }
+    p:last-child { margin-bottom: 0; }
+
+    .callout {
+      background: rgba(59, 130, 246, 0.1);
+      border-left: 4px solid #3b82f6;
+      border-radius: 0 8px 8px 0;
+      padding: 14px 20px;
+      margin: 18px 0;
+      color: #bfdbfe;
+      font-style: italic;
+    }
+
+    .warning {
+      background: rgba(251, 191, 36, 0.1);
+      border-left: 4px solid #fbbf24;
+      border-radius: 0 8px 8px 0;
+      padding: 14px 20px;
+      margin: 18px 0;
+      color: #fde68a;
+    }
+
+    .success {
+      background: rgba(52, 211, 153, 0.1);
+      border-left: 4px solid #34d399;
+      border-radius: 0 8px 8px 0;
+      padding: 14px 20px;
+      margin: 18px 0;
+      color: #6ee7b7;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-size: 0.92rem;
+    }
+
+    thead tr { background: #2d3451; }
+
+    thead th {
+      padding: 12px 16px;
+      text-align: left;
+      color: #93c5fd;
+      font-weight: 700;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    tbody tr { border-bottom: 1px solid #2d3451; transition: background 0.15s; }
+    tbody tr:hover { background: rgba(59,130,246,0.06); }
+    tbody td { padding: 11px 16px; color: #cbd5e1; }
+    tbody td:first-child { color: #93c5fd; font-weight: 600; font-family: monospace; }
+
+    .code-block {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 16px 0;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.88rem;
+      overflow-x: auto;
+      line-height: 1.8;
+    }
+
+    .code-block .comment { color: #6e7681; }
+    .code-block .keyword { color: #ff7b72; }
+    .code-block .string { color: #a5d6ff; }
+    .code-block .fn { color: #d2a8ff; }
+    .code-block .tag { color: #7ee787; }
+    .code-block .attr { color: #79c0ff; }
+    .code-block .folder { color: #ffa657; }
+    .code-block .file { color: #e6edf3; }
+    .code-block .url { color: #7ee787; }
+    .code-block .prompt { color: #6e7681; user-select: none; }
+    .code-block .cmd { color: #79c0ff; }
+
+    .file-tree {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 16px 0;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.88rem;
+      line-height: 2;
+    }
+
+    .file-tree .folder-name { color: #ffa657; font-weight: 700; }
+    .file-tree .file-name { color: #e6edf3; }
+    .file-tree .comment { color: #6e7681; }
+    .file-tree .important { color: #7ee787; }
+
+    .step-list {
+      list-style: none;
+      padding: 0;
+      margin: 14px 0;
+    }
+
+    .step-list li {
+      display: flex;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid #2d3451;
+      color: #cbd5e1;
+    }
+
+    .step-list li:last-child { border-bottom: none; }
+
+    .step-num {
+      background: #3b82f6;
+      color: white;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    code {
+      background: #252b40;
+      color: #79c0ff;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.87em;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    @media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
+
+    .compare-card {
+      background: #252b40;
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+
+    .compare-card.bad { border: 1px solid #f87171; }
+    .compare-card.good { border: 1px solid #34d399; }
+
+    .compare-card .label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .compare-card.bad .label { color: #f87171; }
+    .compare-card.good .label { color: #34d399; }
+
+    .summary-box {
+      background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(139,92,246,0.12));
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 12px;
+      padding: 24px 28px;
+    }
+
+    .summary-box ul { list-style: none; padding: 0; }
+
+    .summary-box ul li {
+      padding: 7px 0 7px 28px;
+      position: relative;
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .summary-box ul li:last-child { border-bottom: none; }
+
+    .summary-box ul li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #34d399;
+      font-weight: 800;
+    }
+
+    .exam-section {
+      background: linear-gradient(135deg, #1a2e1a, #1a2035);
+      border: 1px solid #34d399;
+      border-radius: 14px;
+      padding: 32px 36px;
+      margin-top: 32px;
+    }
+
+    .exam-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #34d399;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(52,211,153,0.2);
+    }
+
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      background: #34d399;
+      color: #0d1117;
+      font-size: 1.3rem;
+      font-weight: 900;
+      padding: 10px 28px;
+      border-radius: 30px;
+      margin-bottom: 20px;
+    }
+
+    .pass { color: #34d399; font-weight: 700; }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px 0;
+      color: #475569;
+      font-size: 0.82rem;
+    }
+
+    footer strong { color: #64748b; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Next.js Full Course — Zero to Hero</div>
+  <h1>Tutorial 2</h1>
+  <p>Installing Next.js &amp; Your First Project — From zero to a running app</p>
+  <div class="meta">
+    <span>📚 Level: Beginner</span>
+    <span>⏱ ~20 min read</span>
+    <span>🗓 May 2026</span>
+    <span>✅ Exam Passed: 10/10</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- Section 1: Node.js -->
+  <div class="section">
+    <div class="section-title"><span class="num">1</span> What Do You Need First? — Node.js</div>
+    <p>Before you can use Next.js, you need to install <strong style="color:#93c5fd">Node.js</strong> on your computer.</p>
+    <div class="callout">
+      💡 JavaScript normally lives inside a browser (like Chrome). Node.js is like giving JavaScript a <strong>home on your computer</strong> so it can run anywhere — without a browser.
+    </div>
+    <p>Next.js needs Node.js to run on your machine during development.</p>
+    <p><strong style="color:#93c5fd">Check if you already have it:</strong></p>
+    <div class="code-block">
+      <span class="prompt">$ </span><span class="cmd">node -v</span><br>
+      <span class="comment">v18.17.0   ← if you see this, you're good! ✅</span>
+    </div>
+    <p>If you get an error, go to <strong style="color:#93c5fd">nodejs.org</strong> and download the <strong>LTS version</strong>.</p>
+    <div class="warning">⚠️ <strong>Minimum required:</strong> Node.js version 18 or higher.</div>
+  </div>
+
+  <!-- Section 2: Create project -->
+  <div class="section">
+    <div class="section-title"><span class="num">2</span> Creating Your First Next.js Project</div>
+    <p>Open your terminal and run this single command:</p>
+    <div class="code-block">
+      <span class="prompt">$ </span><span class="cmd">npx create-next-app@latest my-first-app</span>
+    </div>
+    <table>
+      <thead><tr><th>Part</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>npx</td><td>Runs packages without installing them globally</td></tr>
+        <tr><td>create-next-app</td><td>Official tool by Vercel to create Next.js projects</td></tr>
+        <tr><td>@latest</td><td>Use the newest version</td></tr>
+        <tr><td>my-first-app</td><td>Your project name (choose anything you like)</td></tr>
+      </tbody>
+    </table>
+    <p><strong style="color:#93c5fd">Answer the setup questions like this:</strong></p>
+    <div class="code-block">
+      <span class="comment">✔ Would you like to use TypeScript?          → </span><span style="color:#f87171">No</span><br>
+      <span class="comment">✔ Would you like to use ESLint?              → </span><span style="color:#7ee787">Yes</span><br>
+      <span class="comment">✔ Would you like to use Tailwind CSS?        → </span><span style="color:#f87171">No</span><br>
+      <span class="comment">✔ Would you like to use the src/ directory?  → </span><span style="color:#f87171">No</span><br>
+      <span class="comment">✔ Would you like to use App Router?          → </span><span style="color:#f87171">No</span>  <span class="comment">← Important!</span><br>
+      <span class="comment">✔ Would you like to customize import alias?  → </span><span style="color:#f87171">No</span>
+    </div>
+    <div class="warning">⚠️ <strong>Why "App Router → No"?</strong> Next.js has two systems: the older <strong>Pages Router</strong> and the newer <strong>App Router</strong>. We start with Pages Router because it is easier to understand. We'll learn App Router later!</div>
+  </div>
+
+  <!-- Section 3: Open project -->
+  <div class="section">
+    <div class="section-title"><span class="num">3</span> Opening the Project</div>
+    <p>Enter your project folder and open it in VS Code:</p>
+    <div class="code-block">
+      <span class="prompt">$ </span><span class="cmd">cd my-first-app</span><br>
+      <span class="prompt">$ </span><span class="cmd">code .</span>
+    </div>
+    <p>If <code>code .</code> doesn't work, open VS Code manually and use <strong>File → Open Folder</strong>.</p>
+  </div>
+
+  <!-- Section 4: Project structure -->
+  <div class="section">
+    <div class="section-title"><span class="num">4</span> The Project Structure</div>
+    <div class="file-tree">
+      <span class="folder-name">my-first-app/</span><br>
+      │<br>
+      ├── <span class="folder-name">pages/</span>               <span class="comment">← Your pages live here</span><br>
+      │&nbsp;&nbsp; ├── <span class="important">index.js</span>         <span class="comment">← Home page ( / )</span><br>
+      │&nbsp;&nbsp; ├── <span class="file-name">_app.js</span>          <span class="comment">← Wraps all pages</span><br>
+      │&nbsp;&nbsp; └── <span class="folder-name">api/</span>             <span class="comment">← API routes folder</span><br>
+      │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; └── <span class="file-name">hello.js</span>     <span class="comment">← Example API route</span><br>
+      │<br>
+      ├── <span class="folder-name">public/</span>              <span class="comment">← Static files (images, icons)</span><br>
+      │<br>
+      ├── <span class="folder-name">styles/</span>              <span class="comment">← CSS files</span><br>
+      │&nbsp;&nbsp; ├── <span class="file-name">globals.css</span>      <span class="comment">← Applied to all pages</span><br>
+      │&nbsp;&nbsp; └── <span class="file-name">Home.module.css</span>  <span class="comment">← Only for home page</span><br>
+      │<br>
+      ├── <span class="file-name">node_modules/</span>        <span class="comment">← Installed packages (don't touch!)</span><br>
+      ├── <span class="file-name">package.json</span>         <span class="comment">← Project info and dependencies</span><br>
+      ├── <span class="file-name">next.config.js</span>       <span class="comment">← Next.js configuration</span><br>
+      └── <span class="file-name">.gitignore</span>           <span class="comment">← Files to ignore in Git</span>
+    </div>
+    <p>The most important folder is <code>pages/</code> — this is where you spend most of your time. Every file here becomes a page automatically.</p>
+  </div>
+
+  <!-- Section 5: Running the app -->
+  <div class="section">
+    <div class="section-title"><span class="num">5</span> Running Your App</div>
+    <p>Start the development server with:</p>
+    <div class="code-block">
+      <span class="prompt">$ </span><span class="cmd">npm run dev</span>
+    </div>
+    <p>You will see:</p>
+    <div class="code-block">
+      <span style="color:#d2a8ff">▲ Next.js 14.x.x</span><br>
+      <span class="comment">- Local:   </span><span class="url">http://localhost:3000</span><br>
+      <span class="comment">- Ready in 1.2s ✓</span>
+    </div>
+    <p>Open your browser and go to <code>http://localhost:3000</code> — your app is running! 🎉</p>
+    <div class="callout">
+      💡 <strong>What is localhost:3000?</strong> — <code>localhost</code> means "my own computer". <code>3000</code> is the port number (like a door number). So this means: "open the website running on my computer at door 3000".
+    </div>
+    <p>To <strong>stop</strong> the server, press <code>Ctrl + C</code> in the terminal. To start again, run <code>npm run dev</code>.</p>
+  </div>
+
+  <!-- Section 6: First page -->
+  <div class="section">
+    <div class="section-title"><span class="num">6</span> Your First Page — pages/index.js</div>
+    <p>Open <code>pages/index.js</code> and replace everything with this simple code:</p>
+    <div class="code-block">
+      <span class="keyword">export default function</span> <span class="fn">Home</span>() {<br>
+      &nbsp;&nbsp;<span class="keyword">return</span> (<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;div&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;h1&gt;</span>Hello, Next.js!<span class="tag">&lt;/h1&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;p&gt;</span>My first Next.js page is working!<span class="tag">&lt;/p&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;/div&gt;</span><br>
+      &nbsp;&nbsp;);<br>
+      }
+    </div>
+    <p>Save the file — the browser updates <strong>instantly</strong>! This is <strong style="color:#93c5fd">Fast Refresh</strong>.</p>
+    <div class="callout">
+      💡 <strong>What is <code>export default</code>?</strong> — It means "this is the main thing from this file." In Next.js, it also tells the framework: <em>"this is the component to render for this page."</em> Without it, Next.js won't know what to display.
+    </div>
+  </div>
+
+  <!-- Section 7: Second page -->
+  <div class="section">
+    <div class="section-title"><span class="num">7</span> Creating a Second Page</div>
+    <p>Create a new file <code>pages/about.js</code>:</p>
+    <div class="code-block">
+      <span class="keyword">export default function</span> <span class="fn">About</span>() {<br>
+      &nbsp;&nbsp;<span class="keyword">return</span> (<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;div&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;h1&gt;</span>About Page<span class="tag">&lt;/h1&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;p&gt;</span>This is the about page.<span class="tag">&lt;/p&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;/div&gt;</span><br>
+      &nbsp;&nbsp;);<br>
+      }
+    </div>
+    <p>Go to <code>http://localhost:3000/about</code> in your browser — your about page is live! No router config needed. 🎉</p>
+  </div>
+
+  <!-- Section 8: Link -->
+  <div class="section">
+    <div class="section-title"><span class="num">8</span> Navigating Between Pages — &lt;Link&gt;</div>
+    <p>Use the <code>&lt;Link&gt;</code> component from Next.js to navigate between pages:</p>
+    <div class="code-block">
+      <span class="keyword">import</span> Link <span class="keyword">from</span> <span class="string">'next/link'</span>;<br><br>
+      <span class="keyword">export default function</span> <span class="fn">Home</span>() {<br>
+      &nbsp;&nbsp;<span class="keyword">return</span> (<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;div&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;h1&gt;</span>Hello, Next.js!<span class="tag">&lt;/h1&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;Link</span> <span class="attr">href</span>=<span class="string">"/about"</span><span class="tag">&gt;</span>Go to About Page<span class="tag">&lt;/Link&gt;</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;/div&gt;</span><br>
+      &nbsp;&nbsp;);<br>
+      }
+    </div>
+    <div class="compare-grid">
+      <div class="compare-card bad">
+        <div class="label">❌ Don't use — &lt;a&gt;</div>
+        <p style="font-size:0.88rem; color:#fca5a5; margin:0">Reloads the full page every time. Slow. Normal HTML tag.</p>
+      </div>
+      <div class="compare-card good">
+        <div class="label">✅ Use this — &lt;Link&gt;</div>
+        <p style="font-size:0.88rem; color:#86efac; margin:0">No page reload. Instant navigation. Great for performance.</p>
+      </div>
+    </div>
+    <p>The <code>&lt;Link&gt;</code> component uses <strong style="color:#93c5fd">client-side navigation</strong> — it only loads the new page's content, not the entire page again.</p>
+  </div>
+
+  <!-- Summary -->
+  <div class="section">
+    <div class="section-title"><span class="num">9</span> Summary</div>
+    <div class="summary-box">
+      <ul>
+        <li>Install <strong>Node.js 18+</strong> before using Next.js. Check with <code>node -v</code>.</li>
+        <li>Create a project with <code>npx create-next-app@latest project-name</code>.</li>
+        <li>Start the dev server with <code>npm run dev</code> → open <code>http://localhost:3000</code>.</li>
+        <li>The <strong>pages/ folder</strong> is where all your pages live — one file = one route.</li>
+        <li>Use <strong><code>export default</code></strong> to tell Next.js which component to render for the page.</li>
+        <li>Use <strong><code>&lt;Link&gt;</code></strong> (not <code>&lt;a&gt;</code>) to navigate — it's faster and avoids full page reloads.</li>
+        <li><strong>Fast Refresh</strong> updates the browser instantly when you save a file.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Exam Results -->
+  <div class="exam-section">
+    <div class="exam-title">📝 Tutorial 2 Exam — Results</div>
+    <div class="score-badge">🏆 10 / 10 — Perfect Score!</div>
+    <table>
+      <thead><tr><th>Part</th><th>Topic</th><th>Score</th></tr></thead>
+      <tbody>
+        <tr><td>Part 1</td><td>Multiple Choice</td><td class="pass">4/4 ✅</td></tr>
+        <tr><td>Part 2</td><td>Short Answer</td><td class="pass">2/2 ✅</td></tr>
+        <tr><td>Part 3</td><td>Complete the Code</td><td class="pass">2/2 ✅</td></tr>
+        <tr><td>Part 4</td><td>Find the Error</td><td class="pass">2/2 ✅</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:16px; color:#6ee7b7;">Student correctly identified the broken closing tag <code>&lt;h1&gt;About Me&lt;h1&gt;</code> → should be <code>&lt;/h1&gt;</code>. Also correctly explained Node.js, export default, and the Link component.</p>
+  </div>
+
+</main>
+
+<footer>
+  <p><strong>Next.js Full Course — Zero to Hero</strong> &nbsp;|&nbsp; Tutorial 2 of many &nbsp;|&nbsp; English Level B1</p>
+  <p style="margin-top:6px">Next up: Tutorial 3 — Pages, Routing &amp; Passing Data</p>
+</footer>
+
+</body>
+</html>
